@@ -1,3 +1,0 @@
-requirements.txt 
-
-# all dependencies (packages using in your python codes)
