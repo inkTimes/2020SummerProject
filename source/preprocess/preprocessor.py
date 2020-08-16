@@ -1,8 +1,12 @@
-from text_filter import TextFilter
-from qa_generator import QAGenerator 
-from features_generator import FeaturesGenerator
-from tfidf_generator import TfidfGenerator
-from kmeans_clustering import KmeansCluster 
+# print('__file__={0:<35} | __name__={1:<20} | __package__={2:<20}'.format(__file__,__name__,str(__package__)))
+
+from .text_filter import TextFilter
+from .qa_generator import QAGenerator 
+from .features_generator import FeaturesGenerator
+from .qatoken_filter import TokenFilter
+from ..clustering.tfidf_generator import TfidfGenerator
+from ..clustering.kmeans_clustering import KmeansCluster 
+
 
 
 class Preprocessor:
@@ -49,6 +53,15 @@ class Preprocessor:
 		cluster_gen = KmeansCluster(doc_dict, k_value, max_iter)
 		clusters = cluster_gen.get_clusters()
 		return clusters 
+
+	def token_filter (self, quest_token, ans_token):
+		ques = []
+		ans = []
+		qafilter = TokenFilter(quest_token, ans_token)
+		ques, ans = qafilter.rm_keywords("表情")
+		return ques, ans
+
+
 		
 
 '''
@@ -100,6 +113,7 @@ def main():
 
 	ans_tokens = text_preprocessor.get_tokens(answers)
 	quest_tokens = text_preprocessor.get_tokens(questions)
+	quest_tokens, ans_tokens = text_preprocessor.token_filter(quest_tokens, ans_tokens)
 
 	# The following comments make two lists have equal length 
 
@@ -108,14 +122,14 @@ def main():
 	# quest_tokens = quest_tokens[:tokens_length]
 
 	doc_dict = {'questions': quest_tokens, 'answers':ans_tokens}
-	clusters = text_preprocessor.get_clusters(doc_dict, k_value=50)
+	clusters = text_preprocessor.get_clusters(doc_dict, k_value=20)
 
 
 	with open('/Users/ink/Documents/SummerProject/data/cluster_result.txt', 'w') as f:
 		for i in range(len(clusters)):
 			f.write("This is {} th cluster!\n".format(i+1))
 			for lines in clusters[i]:
-				f.write('%s '%lines)
+				f.write('%s\n'%lines)
 			f.write('\n')
 
 

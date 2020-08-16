@@ -92,9 +92,30 @@ class QAGenerator:
 							answer_list = []
 				shift = self.ans
 
+		self.rm_keywords("正在使用")
+		# self.question, self.answer = qafilter.rm_keywords("表情")
+		# self.question, self.answer = qafilter.rm_keywords("链接")
+
 	def get_answers(self):
 		return self.answer
 
 	def get_questions(self):
 		return self.question
 
+	def rm_keywords (self, keyword):
+		clean_quest = []
+		clean_ans = [] 
+		count = 0
+
+		for i in range(len(self.question)):
+			result = re.search(keyword, self.question[i])
+			if result == None:
+				clean_quest.append(self.question[i])
+				clean_ans.append(self.answer[i])
+			else:
+				count += 1
+
+		print("{} sentences have been removed.".format(count))
+
+		self.question = clean_quest
+		self.answer = clean_ans
